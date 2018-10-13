@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        h2 {
+            color: red;
+        }
+        .info {
+            margin: 20px 60px;
+            width: 200px;
+            border: 2px dashed green;
+        }
+    </style>
+</head>
+<body>
+    <form action="/upload.html" method="POST" enctype="multipart/form-data"
+    	onsubmit="return uploadFile(event)">
+        <input type="file" name="myfile" id="file">
+        <input type="submit">
+    </form>
+
+    <h2>My html template comes from server</h2>
+
+    <div class="info">
+        Here will be server info!
+    </div>
+    
+    <script type="text/javascript">
+    	function uploadFile(e) {
+    		let action = e.target.action;
+    		let formElems = e.target.elements;
+    		let file = formElems.file;
+    		console.log(file.files[0]);
+    		
+    		let formData = new FormData();
+    		formData.append("myFile1", file.files[0]);
+    		
+    		let xhr = new XMLHttpRequest();
+    		xhr.open("POST", action, true);
+    		console.log(formData);
+    		xhr.send(formData);
+    		xhr.upload.onload = function () {
+    			console.log("File was uploaded!");
+    		}
+    		xhr.onreadystatechange = function () {
+    			if (this.readyState == 4) {
+    				console.log("Operation are done");
+    			}
+    		}
+    		return false;
+    	}
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 Project was built in Eclipse.
 
 ## How to start
-1. Download zip-archive from [Google Drive](https://drive.google.com/open?id=1mO3vsVjKt1gi2Nppb3nBKd-n3YQVDxlh)
+1. Download zip-archive from [Google Drive](https://drive.google.com/open?id=16m5uqR7IA6ASdU0hL1wOyJMfBDIc1Hul)
 2. Unpack it in any folder
 3. Click Starter.bat to run server
 4. It will automatically open your default browser on http://localhost:8080/uploadForm.html

@@ -14,10 +14,14 @@ public class FileUtils {
 	 * @throws IOException
 	 */
 	public static void write(byte[] inputBuffer, String filename) {
+		File folder = new File("upload");
 		File file = new File("upload/" + filename);
 		FileOutputStream fos = null;
 		
 		try {
+			if (!folder.exists()) {
+				folder.mkdir();
+			}
 			if (!file.exists()) {
 				file.createNewFile();
 			}

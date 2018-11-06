@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.vit.lightweightserver.exception.NoBoundaryException;
 import com.vit.lightweightserver.exception.NoMethodException;
+import com.vit.lightweightserver.exception.NoStartingLineException;
 import com.vit.lightweightserver.http.FormDataPart;
 import com.vit.lightweightserver.http.FormPart;
 import com.vit.lightweightserver.util.BinaryUtils;
@@ -35,7 +36,7 @@ public class RequestProcessor {
 		process();
 	}
 	
-	public void process() throws NoMethodException, IOException, NoBoundaryException, URISyntaxException {
+	public void process() throws NoMethodException, IOException, NoBoundaryException, URISyntaxException, NoStartingLineException {
 		try {
 			this.getBytesFromStream();
 		} catch (IOException e) {
@@ -83,13 +84,14 @@ public class RequestProcessor {
 		inputBuffer = tempBuffer;
 	}
 	
-	public void parseURI() throws URISyntaxException {
+	public void parseURI() throws URISyntaxException, NoStartingLineException {
 		int startingLineEndPos = BinaryUtils.indexOf(inputBuffer, "\r\n".getBytes());
 		StringBuilder startingLineStrBuilder = new StringBuilder();
 		for (int i = 0; i < startingLineEndPos; i++) {
 			startingLineStrBuilder.append((char) inputBuffer[i]);
 		}
 		String startingLine = startingLineStrBuilder.toString();
+		if (startingLine.equals("")) throw new NoStartingLineException("Starting line is required!");
 		int uriStart = startingLine.indexOf(" ") + 1;
 		int uriEnd = startingLine.indexOf(" ", uriStart);
 		String uriStr = startingLine.substring(uriStart, uriEnd);

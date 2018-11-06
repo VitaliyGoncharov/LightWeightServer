@@ -3,13 +3,13 @@
 Project was built in Eclipse.
 
 ## How to start
-1. Download zip-archive from [Google Drive](https://drive.google.com/open?id=1l1kJ2DGcUFhuzaCls3vR7GlJ4ZAcGIYS)
+1. Download zip-archive from [Google Drive](https://drive.google.com/open?id=1BCSGqrU2zrsmszgMEtGeBMfo3dxBs7IR)
 2. Unpack it in any folder
 3. Click Starter.bat to run server
 4. Open your browser on http://localhost:8080/uploadForm.html
 
-You can upload file only one per request. File will be uploaded to "./upload/" folder. Programm will create this folder automatically if it doesn't exist.
-Once you uploaded photo you can find it here: "./upload/<your file name>"
+You can upload only one file per request. File will be uploaded to "./upload/" folder. Programm will create this folder automatically if it doesn't exist.
+Once you uploaded file (photo) you can find it here: "./upload/<your file name>"
 Check that file was uploaded correctly.
 
 ## Worth to note

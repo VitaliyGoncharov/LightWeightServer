@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 
+import com.vit.lightweightserver.exception.NoStartingLineException;
 import com.vit.lightweightserver.request.Request;
 import com.vit.lightweightserver.request.RequestProcessor;
 import com.vit.lightweightserver.response.Response;
@@ -41,6 +42,8 @@ public class HttpServer implements Runnable {
 			
 			Response response = new Response(output, request.getUri());
 			response.sendStaticResource();
+		} catch (NoStartingLineException e) {
+			log.info("ThreadID: " + Thread.currentThread().getId() + " | Request was made without starting line!");
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -49,7 +52,7 @@ public class HttpServer implements Runnable {
 			SocketUtils.closeQuietly(socket);
 			
 			if (Starter.VERBOSE) {
-				log.info("Connection closed.\n");
+				log.info("ThreadID: " + Thread.currentThread().getId() + " | Connection closed.\n");
 			}
 		}
 		

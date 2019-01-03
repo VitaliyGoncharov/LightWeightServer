@@ -24,7 +24,7 @@ public class RequestProcessor {
 	
 	static final String MULTIPART = "multipart/form-data";
 	
-	URI uri;
+	String uri;
 	String method;
 	byte[] inputBuffer;
 	InputStream inputStream;
@@ -94,8 +94,7 @@ public class RequestProcessor {
 		if (startingLine.equals("")) throw new NoStartingLineException("Starting line is required!");
 		int uriStart = startingLine.indexOf(" ") + 1;
 		int uriEnd = startingLine.indexOf(" ", uriStart);
-		String uriStr = startingLine.substring(uriStart, uriEnd);
-		uri = new URI(uriStr);
+		uri = startingLine.substring(uriStart, uriEnd);
 	}
 	
 	public void parseHeaders() {
@@ -200,7 +199,7 @@ public class RequestProcessor {
 		return false;
 	}
 	
-	public Request getRequest() {
-		return new Request(uri, method, headers, parts);
+	public HttpRequestImpl getRequest() {
+		return new HttpRequestImpl(uri, method, headers, parts);
 	}
 }

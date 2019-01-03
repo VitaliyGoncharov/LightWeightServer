@@ -1,60 +1,69 @@
 package com.vit.lightweightserver;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-import com.vit.lightweightserver.exception.NoStartingLineException;
-import com.vit.lightweightserver.request.Request;
-import com.vit.lightweightserver.request.RequestProcessor;
-import com.vit.lightweightserver.response.Response;
-import com.vit.lightweightserver.util.IOUtils;
-import com.vit.lightweightserver.util.SocketUtils;
+import com.vit.lightweightserver.http.Servlet;
 
-/**
- * My first implementation of http server
- *
- */
-public class HttpServer implements Runnable {
+public class HttpServer {
 	private static Logger log = Logger.getLogger(HttpServer.class.getName());
+	private static Map<String, Servlet> servletMap = new ConcurrentHashMap<>();
+	private static boolean RUNNING = false;
 	
-	private final Socket socket;
-	private InputStream input;
-	private OutputStream output;
+	static final boolean VERBOSE = true;
+	static final boolean OPEN_WEB_BROWSER = false;
+	static final int PORT = 80;
 	
-	public HttpServer(Socket socket) {
-		this.socket = socket;
-	}
 	
-	public void run() {
-		try {
-			input = socket.getInputStream();
-			output = socket.getOutputStream();
-			
-			RequestProcessor reqProcessor = new RequestProcessor(input);
-			Request request = reqProcessor.getRequest();
-			
-			if (Starter.VERBOSE) {
-				log.info("Requested method: " + request.getMethod());
-				log.info("Requested uri: " + request.getUri());
-			}
-			
-			Response response = new Response(output, request.getUri());
-			response.sendStaticResource();
-		} catch (NoStartingLineException e) {
-			log.info("ThreadID: " + Thread.currentThread().getId() + " | Request was made without starting line!");
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(input);
-			IOUtils.closeQuietly(output);
-			SocketUtils.closeQuietly(socket);
-			
-			if (Starter.VERBOSE) {
-				log.info("ThreadID: " + Thread.currentThread().getId() + " | Connection closed.\n");
-			}
+	@SuppressWarnings("unused")
+	public static void main(String[] args) throws IOException, URISyntaxException {
+		
+		@SuppressWarnings("resource")
+		ServerSocket serverSocket = new ServerSocket( PORT, 0, InetAddress.getByName("192.168.1.238"));
+		System.out.println("Server started.\nListening for connections on port : " + PORT + " ...\n");
+		RUNNING = true;
+		
+		if (OPEN_WEB_BROWSER && Desktop.isDesktopSupported()) {
+			Desktop.getDesktop().browse(new URI("http://localhost:"+ PORT +"/uploadForm.html"));
 		}
 		
+		while (true) {
+			Client client = new Client(serverSocket.accept());
+			
+			Thread thread = new Thread(client);
+			thread.start();
+			
+			if (VERBOSE) {
+				log.info("ThreadID: " + thread.getId() + " | Connecton opened.");
+			}
+		}
+	}
+	
+	public static void post(String uri, Servlet servlet) {
+		servletMap.put(uri, servlet);
+		
+		if (RUNNING == false) {
+			Thread thread = new Thread(new Runnable() {
+				@Override
+				public void run() {
+					try {
+						HttpServer.main(null);
+					} catch (Exception e) {}
+				}
+			});
+			thread.start();
+		}
+	}
+	
+	public static Map<String, Servlet> getServletMap() {
+		return servletMap;
 	}
 }
